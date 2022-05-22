@@ -10,16 +10,13 @@ d3.json("data/buildings.json").then(data => {
 
     // Scaling
     const x = d3.scaleBand()
-        .domain(["Burj Khalifa", "Shanghai Tower",
-            "Abraj Al-Bait Clock Tower", "Ping An Finance Centre",
-            "Lotte World Tower", "One World Trade Center",
-            "CTF Finance Centre"])
+        .domain(data.map(d => d.name) )
         .range([0, 400])
         .paddingInner(0.3)
         .paddingOuter(0.2)
 
     const y = d3.scaleLinear()
-        .domain([0, 828])
+        .domain([0, d3.max(data, d => d.height)])
         .range([0, 400])
 
     const rectangles = svg.selectAll("rect")
