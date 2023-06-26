@@ -93,29 +93,26 @@ function update(data) {
   yAxisGroup.transition(t).call(yAxisCall)
 
   // JOIN new data with old elements
-  const rects = g.selectAll("rect")
+  const rects = g.selectAll("circle")
       .data(data, d => d.month)
 
   // EXIT remove old elements
   rects.exit()
       .attr("fill", "red")
       .transition(t)
-        .attr("height", 0)
-        .attr("y", y(0))
+        .attr("cy", y(0))
         .remove()
 
   // ENTER new elements present in the new data
-  rects.enter().append("rect")
+  rects.enter().append("circle") // rect = bar chart, circle = scatterplot
       .attr("fill", "grey")
-      .attr("y", y(0))
-      .attr("height", 0)
+      .attr("cy", y(0))
+      .attr("r", 5)
       // UPDATE is now part of transition
       .merge(rects)
       .transition(t) // gradually apply over 500ms
-        .attr("x", (d) => x(d.month))
-        .attr("width", x.bandwidth)
-        .attr("y", d => y(d[value]))
-        .attr("height", d => HEIGHT - y(d[value]))
+        .attr("cx", (d) => x(d.month) + (x.bandwidth() / 2))
+        .attr("cy", d => y(d[value]))
 
   // Dynamic yLabel
   const text = flag ? "Profit ($)" : "Revenue ($)"
