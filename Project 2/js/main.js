@@ -1,8 +1,8 @@
-/*
-*    main.js
-*    Mastering Data Visualization with D3.js
-*    Project 2 - Gapminder Clone
-*/
+	/*
+    *    main.js
+    *    Mastering Data Visualization with D3.js
+    *    Project 2 - Gapminder Clone
+    */
 
 const MARGIN = { LEFT: 100, RIGHT: 10, TOP: 10, BOTTOM: 100 }
 const WIDTH = 800 - MARGIN.LEFT - MARGIN.RIGHT
@@ -38,17 +38,31 @@ const timeLabel = g.append("text")
 	.attr("x", WIDTH - 40)
 	.text("1800")
 
+// Tooltip
+const tip = d3.tip()
+	.attr('class', 'd3-tip')
+	.html(d => {
+		return `<strong>Country:</strong> <span style='color:red;text-transform:capitalize'>${d.country}</span><br>`
+				+ `<strong>Continent:</strong> <span style='color:red;text-transform:capitalize'>${d.continent}</span><br>`
+				+ `<strong>Life Expectancy:</strong> <span style='color:red'>${d3.format(".2f")(d.life_exp)}</span><br>`
+				+ `<strong>GDP Per Capita:</strong> <span style='color:red'>${d3.format("$,.0f")(d.income)}</span><br>`
+				+ `<strong>Population:</strong> <span style='color:red'>${d3.format(",.0f")(d.population)}</span><br>`
+	})
+g.call(tip)
+
 // Scaling
 const x = d3.scaleLog()
 	.domain([142, 150000])
 	.range([0, WIDTH])
+
 const y = d3.scaleLinear()
-	// .domain([0, d3.max(data, d => d.life_exp)])
 	.domain([0, 100])
 	.range([HEIGHT, 0])
+
 const area = d3.scaleLinear()
 	.range([25*Math.PI, 1500*Math.PI])
 	.domain([2000, 1400000000])
+
 const contientColor = d3.scaleOrdinal(d3.schemePastel1)
 
 // X Axis
@@ -72,6 +86,27 @@ const yAxisCall = d3.axisLeft(y)
 g.append("g")
 	.attr("class", "y axis")
 	.call(yAxisCall)
+
+// Legend
+const cont = ["europe", "asia", "americas", "africa"]
+const legend = g.append("g")
+	.attr("transform", `translate(${WIDTH - 10}, ${HEIGHT - 125})`)
+cont.forEach((cont, i) => {
+	const legendRow = legend.append("g")
+		.attr("transform", `translate(0, ${i*20})`)
+
+	legendRow.append("rect")
+		.attr("width", 10)
+		.attr("height", 10)
+		.attr("fill", contientColor(cont))
+
+	legendRow.append("text")
+		.attr("x", -10)
+		.attr("y", 10)
+		.attr("text-anchor", "end")
+		.style("text-transform", "capitalize")
+		.text(cont)
+})
 
 d3.json("data/data.json").then(function(rawData){
 //	console.log(rawData);
@@ -119,6 +154,8 @@ function update(data, year) {
 	dots.enter().append("circle")
 		.attr("fill", d => contientColor(d.continent))
 		.merge(dots)
+		.on("mouseover", tip.show)
+		.on("mouseout", tip.hide)
 		.transition(t)
 			.attr("cx", d => x(d.income))
 			.attr("cy", d => y(d.life_exp))
