@@ -8,6 +8,11 @@ const MARGIN = { LEFT: 100, RIGHT: 10, TOP: 10, BOTTOM: 100 }
 const WIDTH = 800 - MARGIN.LEFT - MARGIN.RIGHT
 const HEIGHT = 500 - MARGIN.TOP - MARGIN.BOTTOM
 
+
+let currentYear = 1800
+let interval;
+let formattedData;
+
 const svg = d3.select("#chart-area").append("svg")
 	.attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
 	.attr("height", HEIGHT + MARGIN.TOP + MARGIN.BOTTOM)
@@ -18,7 +23,7 @@ const g = svg.append("g")
 // X Label
 const xLabel = g.append("text")
 	.attr("x", WIDTH / 2)
-	.attr("y", HEIGHT + 100)
+	.attr("y", HEIGHT + 80)
 	.attr("font-size", "20px")
 	.attr("text-anchor", "middle")
 	.text("GDP Per Capita")
@@ -36,6 +41,9 @@ const yLabel = g.append("text")
 const timeLabel = g.append("text")
 	.attr("y", HEIGHT - 10)
 	.attr("x", WIDTH - 40)
+	.attr("font-size", "40px")
+	.attr("opacity", "0.4")
+	.attr("text-anchor", "middle")
 	.text("1800")
 
 // Tooltip
@@ -110,7 +118,7 @@ cont.forEach((cont, i) => {
 
 d3.json("data/data.json").then(function(rawData){
 //	console.log(rawData);
-	const data = rawData.map(d => {
+	formattedData = rawData.map(d => {
 							return {
 								year: d["year"],
 								countries: d["countries"]
@@ -127,24 +135,55 @@ d3.json("data/data.json").then(function(rawData){
 						})
 
 
-	console.log(data)
-
-	let currentYear = 1800
-	d3.interval(() => {
-		currentYear = (currentYear > 2013) ?  1800 : currentYear += 1
-		console.log("current year: " + currentYear)
-		update(data.find(d => d.year === currentYear.toString())["countries"], currentYear)
-	}, 100)
-
-	update(data.find(d => d.year === currentYear.toString())["countries"], currentYear)
+	update()
 
 }).catch(error => {
 	console.log(error)
 })
 
-function update(data, year) {
-	console.log(data)
+function step() {
+	currentYear = (currentYear > 2013) ?  1800 : currentYear += 1
+	update()
+}
+
+// Use jQuery to select buttons
+$("#play-button")
+	.on("click", function() {
+		const button = $(this)
+		if (button.text() === "Play") {
+			button.text("Pause")
+			interval = setInterval(step, 100)
+		}
+		else {
+			button.text("Play")
+			clearInterval(interval)
+		}
+
+	})
+
+$("#reset-button")
+	.on("click", () => {
+		currentYear = 1800
+		update()
+	})
+
+$("#continent-select")
+	.on("click", () => {
+		update()
+	})
+
+function update() {
 	const t = d3.transition().duration(100)
+
+	const contFilter = $("#continent-select").val()
+	let data = formattedData
+		.find(d => d.year === currentYear.toString())["countries"]
+		.filter(d => {
+			if (contFilter === "all") return true
+			else {
+				return d.continent === contFilter
+			}
+		})
 
 	const dots = g.selectAll("circle")
 		.data(data, d => d.country)
@@ -161,5 +200,5 @@ function update(data, year) {
 			.attr("cy", d => y(d.life_exp))
 			.attr("r", d => Math.sqrt((area(d.population)/Math.PI)))
 
-	timeLabel.text(String(year))
+	timeLabel.text(String(currentYear))
 }
