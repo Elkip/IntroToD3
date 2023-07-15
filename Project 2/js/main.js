@@ -4,21 +4,20 @@
     *    Project 2 - Gapminder Clone
     */
 
-const MARGIN = { LEFT: 100, RIGHT: 10, TOP: 10, BOTTOM: 100 }
-const WIDTH = 800 - MARGIN.LEFT - MARGIN.RIGHT
-const HEIGHT = 500 - MARGIN.TOP - MARGIN.BOTTOM
+const MARGIN = { LEFT: 100, RIGHT: 10, TOP: 10, BOTTOM: 100 };
+const WIDTH = 800 - MARGIN.LEFT - MARGIN.RIGHT;
+const HEIGHT = 500 - MARGIN.TOP - MARGIN.BOTTOM;
 
-
-let currentYear = 1800
+let currentYear = 1800;
 let interval;
 let formattedData;
 
 const svg = d3.select("#chart-area").append("svg")
 	.attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
-	.attr("height", HEIGHT + MARGIN.TOP + MARGIN.BOTTOM)
+	.attr("height", HEIGHT + MARGIN.TOP + MARGIN.BOTTOM);
 
 const g = svg.append("g")
-	.attr("transform", `translate(${MARGIN.LEFT}, ${MARGIN.TOP})`)
+	.attr("transform", `translate(${MARGIN.LEFT}, ${MARGIN.TOP})`);
 
 // X Label
 const xLabel = g.append("text")
@@ -26,7 +25,7 @@ const xLabel = g.append("text")
 	.attr("y", HEIGHT + 80)
 	.attr("font-size", "20px")
 	.attr("text-anchor", "middle")
-	.text("GDP Per Capita")
+	.text("GDP Per Capita");
 
 // Y Label
 const yLabel = g.append("text")
@@ -35,7 +34,7 @@ const yLabel = g.append("text")
 	.attr("x", -170)
 	.attr("font-size", "20px")
 	.attr("text-anchor", "middle")
-	.text("Avg. Life Expectancy")
+	.text("Avg. Life Expectancy");
 
 // Time Label
 const timeLabel = g.append("text")
@@ -44,7 +43,7 @@ const timeLabel = g.append("text")
 	.attr("font-size", "40px")
 	.attr("opacity", "0.4")
 	.attr("text-anchor", "middle")
-	.text("1800")
+	.text("1800");
 
 // Tooltip
 const tip = d3.tip()
@@ -55,28 +54,28 @@ const tip = d3.tip()
 				+ `<strong>Life Expectancy:</strong> <span style='color:red'>${d3.format(".2f")(d.life_exp)}</span><br>`
 				+ `<strong>GDP Per Capita:</strong> <span style='color:red'>${d3.format("$,.0f")(d.income)}</span><br>`
 				+ `<strong>Population:</strong> <span style='color:red'>${d3.format(",.0f")(d.population)}</span><br>`
-	})
-g.call(tip)
+	});
+g.call(tip);
 
 // Scaling
 const x = d3.scaleLog()
 	.domain([142, 150000])
-	.range([0, WIDTH])
+	.range([0, WIDTH]);
 
 const y = d3.scaleLinear()
 	.domain([0, 100])
-	.range([HEIGHT, 0])
+	.range([HEIGHT, 0]);
 
 const area = d3.scaleLinear()
 	.range([25*Math.PI, 1500*Math.PI])
-	.domain([2000, 1400000000])
+	.domain([2000, 1400000000]);
 
-const contientColor = d3.scaleOrdinal(d3.schemePastel1)
+const contientColor = d3.scaleOrdinal(d3.schemePastel1);
 
 // X Axis
 const xAxisCall = d3.axisBottom(x)
 	.tickValues([400, 4000, 40000])
-	.tickFormat(d => '$' + d)
+	.tickFormat(d => '$' + d);
 g.append("g")
 	.attr("class", "x axis")
 	.attr("transform", `translate(0, ${HEIGHT})`)
@@ -85,36 +84,36 @@ g.append("g")
 	.attr("y", "10")
 	.attr("x", "-5")
 	.attr("text-anchor", "end")
-	.attr("transform", "rotate(-40)")
+	.attr("transform", "rotate(-40)");
 
 // Y Axis
 const yAxisCall = d3.axisLeft(y)
 	.ticks(5)
-	.tickFormat(d => d + " years")
+	.tickFormat(d => d + " years");
 g.append("g")
 	.attr("class", "y axis")
-	.call(yAxisCall)
+	.call(yAxisCall);
 
 // Legend
-const cont = ["europe", "asia", "americas", "africa"]
+const cont = ["europe", "asia", "americas", "africa"];
 const legend = g.append("g")
-	.attr("transform", `translate(${WIDTH - 10}, ${HEIGHT - 125})`)
+	.attr("transform", `translate(${WIDTH - 10}, ${HEIGHT - 125})`);
 cont.forEach((cont, i) => {
 	const legendRow = legend.append("g")
-		.attr("transform", `translate(0, ${i*20})`)
+		.attr("transform", `translate(0, ${i*20})`);
 
 	legendRow.append("rect")
 		.attr("width", 10)
 		.attr("height", 10)
-		.attr("fill", contientColor(cont))
+		.attr("fill", contientColor(cont));
 
 	legendRow.append("text")
 		.attr("x", -10)
 		.attr("y", 10)
 		.attr("text-anchor", "end")
 		.style("text-transform", "capitalize")
-		.text(cont)
-})
+		.text(cont);
+});
 
 d3.json("data/data.json").then(function(rawData){
 	formattedData = rawData.map(d => {
@@ -125,76 +124,77 @@ d3.json("data/data.json").then(function(rawData){
 														country.life_exp &&
 														country.population))
 									.map(country => {
-										country.income = Number(country.income)
-										country.life_exp = Number(country.life_exp)
-										country.population = Number(country.population)
-										return country
+										country.income = Number(country.income);
+										country.life_exp = Number(country.life_exp);
+										country.population = Number(country.population);
+										return country;
 									})
 							}
-						})
+						});
 
-	update()
+	update();
 
 }).catch(error => {
 	console.log(error)
-})
+});
 
 function step() {
-	currentYear = (currentYear > 2013) ?  1800 : currentYear += 1
-	update()
+	currentYear = (currentYear > 2013) ?  1800 : currentYear += 1;
+	update();
 }
 
 // Use jQuery to select buttons
 $("#play-button")
 	.on("click", function() {
-		const button = $(this)
+		const button = $(this);
 		if (button.text() === "Play") {
-			button.text("Pause")
-			interval = setInterval(step, 100)
+			button.text("Pause");
+			interval = setInterval(step, 100);
 		}
 		else {
-			button.text("Play")
-			clearInterval(interval)
+			button.text("Play");
+			clearInterval(interval);
 		}
 
-	})
+	});
 
 $("#reset-button")
 	.on("click", () => {
-		currentYear = 1800
-		update()
-	})
+		currentYear = 1800;
+		update();
+	});
 
 $("#continent-select")
 	.on("click", () => {
-		update()
-	})
+		update();
+	});
 
-$("#date-slider").slider({
-	min: 1800,
-	max: 2014,
-	step: 1,
-	slide: (event, ui) => {
-		currentYear = ui.value
-		update()
-	}
-})
+$("#date-slider")
+	.slider({
+		min: 1800,
+		max: 2014,
+		step: 1,
+		slide: (event, ui) => {
+			currentYear = ui.value;
+			update();
+		}
+	});
 
 function update() {
-	const t = d3.transition().duration(100)
+	const t = d3.transition().duration(100);
 
-	const contFilter = $("#continent-select").val()
+	const contFilter = $("#continent-select").val();
 	let data = formattedData
 		.find(d => d.year === currentYear.toString())["countries"]
 		.filter(d => {
-			if (contFilter === "all") return true
-			else return d.continent === contFilter
-		})
+			if (contFilter === "all") return true;
+			else return d.continent === contFilter;
+		});
 
 	const dots = g.selectAll("circle")
-		.data(data, d => d.country)
+		.data(data, d => d.country);
 
-	dots.exit().remove()
+	dots.exit().remove();
 
 	dots.enter().append("circle")
 		.attr("fill", d => contientColor(d.continent))
@@ -204,9 +204,9 @@ function update() {
 		.transition(t)
 			.attr("cx", d => x(d.income))
 			.attr("cy", d => y(d.life_exp))
-			.attr("r", d => Math.sqrt((area(d.population)/Math.PI)))
+			.attr("r", d => Math.sqrt((area(d.population)/Math.PI)));
 
-	timeLabel.text(String(currentYear))
-	$("#year")[0].innerHTML = String(currentYear)
-	$("#date-slider").slider("value", Number(currentYear))
+	timeLabel.text(String(currentYear));
+	$("#year")[0].innerHTML = String(currentYear);
+	$("#date-slider").slider("value", Number(currentYear));
 }
