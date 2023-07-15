@@ -4,6 +4,8 @@
 	<meta charset="utf-8">
 	<meta name="description" content="">
 	<title>Project 2 - Gapminder Clone</title>
+	<!-- jQueryUI styling -->
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<!-- Bootstrap -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	<!-- Custom styling -->
@@ -17,13 +19,16 @@
 		</div>
 	</nav>
 
-
 	<!-- Bootstrap grid setup -->
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6">
 				<button id="play-button" class="btn btn-primary">Play</button>
 				<button id="reset-button" class="btn btn-primary">Reset</button>
+				<div id="slider-div">
+					<label>Year: <span id="year">1800</span></label>
+					<div id="date-slider"></div>
+				</div>
 			</div>
 			<div class="col-md-6">
 				<select id="continent-select" class="form-control">
@@ -44,11 +49,12 @@
 
 	<!-- External JS libraries -->
 	<script src="https://d3js.org/d3.v5.min.js"></script>
-	<script src="./js/d3-tip.js"></script>
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+	<script src=" https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js "></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js" integrity="sha256-6XMVI0zB8cRzfZjqKcD01PBsAy3FlDASrlC8SxCpInY=" crossorigin="anonymous"></script>
 	<!-- Custom JS -->
+	<script src="./js/d3-tip.js"></script>
 	<script src="./js/main.js"></script>
 </body>
 </html>

@@ -117,7 +117,6 @@ cont.forEach((cont, i) => {
 })
 
 d3.json("data/data.json").then(function(rawData){
-//	console.log(rawData);
 	formattedData = rawData.map(d => {
 							return {
 								year: d["year"],
@@ -133,7 +132,6 @@ d3.json("data/data.json").then(function(rawData){
 									})
 							}
 						})
-
 
 	update()
 
@@ -172,6 +170,16 @@ $("#continent-select")
 		update()
 	})
 
+$("#date-slider").slider({
+	min: 1800,
+	max: 2014,
+	step: 1,
+	slide: (event, ui) => {
+		currentYear = ui.value
+		update(formattedData.find(d => d.year === currentYear.toString())["countries"])
+	}
+})
+
 function update() {
 	const t = d3.transition().duration(100)
 
@@ -201,4 +209,6 @@ function update() {
 			.attr("r", d => Math.sqrt((area(d.population)/Math.PI)))
 
 	timeLabel.text(String(currentYear))
+	$("#year")[0].innerHTML = String(currentYear)
+	$("#date-slider").slider("value", Number(currentYear))
 }
