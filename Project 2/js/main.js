@@ -176,7 +176,7 @@ $("#date-slider").slider({
 	step: 1,
 	slide: (event, ui) => {
 		currentYear = ui.value
-		update(formattedData.find(d => d.year === currentYear.toString())["countries"])
+		update()
 	}
 })
 
@@ -188,9 +188,7 @@ function update() {
 		.find(d => d.year === currentYear.toString())["countries"]
 		.filter(d => {
 			if (contFilter === "all") return true
-			else {
-				return d.continent === contFilter
-			}
+			else return d.continent === contFilter
 		})
 
 	const dots = g.selectAll("circle")
