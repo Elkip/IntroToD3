@@ -148,9 +148,9 @@ function update() {
 		.attr("height", HEIGHT)
 		.on("mouseover", () => focus.style("display", null))
 		.on("mouseout", () => focus.style("display", "none"))
-		.on("mousemove", function() {
+		.on("mousemove", function(event) {
 			// Find time value that matches coordinate position of mouse
-			const x0 = x.invert(d3.mouse(this)[0]);
+			const x0 = x.invert(d3.pointer(event)[0]);
 			// index of array where time value would belong if it was a data point
 			const i = bisectDate(fnlCoinData, x0, 1);
 			const d0 = fnlCoinData[i - 1];
