@@ -21,7 +21,7 @@
     <nav class="navbar navbar-default"></nav>
     <svg width="600" height="400"></svg>
 
-<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
 
 <script>
 
@@ -34,7 +34,7 @@
 
     var x = d3.scaleTime().range([0, width]),
         y = d3.scaleLinear().range([height, 0]),
-        z = d3.scaleOrdinal(d3.schemeCategory20);
+        z = d3.scaleOrdinal(d3.schemeCategory10);
 
     var stack = d3.stack();
 
@@ -46,8 +46,7 @@
     var g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.tsv("data/stacked_area1.tsv", type, function(error, data) {
-        if (error) throw error;
+    d3.tsv("data/stacked_area1.tsv", type).then(function(data) {
 
         var keys = data.columns.slice(1);
 

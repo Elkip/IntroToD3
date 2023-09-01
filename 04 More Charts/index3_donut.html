@@ -11,9 +11,9 @@
     <meta name="description" content="">
     <title>7.7 - Pie and donut charts</title>
     <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="../7.07.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="../7.07.1/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -22,7 +22,8 @@
         <form></form>
     </div>
 
-<script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+<!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
 
 <script>
 
@@ -31,7 +32,7 @@
         radius = Math.min(width, height) / 2;
 
     //d3.scale.category20()
-    var color = d3.scaleOrdinal(d3.schemeCategory20);
+    var color = d3.scaleOrdinal(d3.schemeCategory10);
 
     //d3.layout.pie()
     var pie = d3.pie()
@@ -48,13 +49,11 @@
         .append("g")
             .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-    d3.tsv("data/donut2.tsv", type, function(error, data) {
+    d3.tsv("data/donut2.tsv", type).then(function(data) {
+
         console.log(data)
-        
-        var regionsByFruit = d3.nest()
-            .key(function(d) { return d.fruit; })
-            .entries(data)
-            .reverse();
+
+        const regionsByFruit = d3.group(data, d => d.fruit);
 
         console.log(regionsByFruit)
 
@@ -62,24 +61,29 @@
             .data(regionsByFruit)
             .enter().append("label");
 
+        // Radio button doesn't work
         label.append("input")
             .attr("type", "radio")
             .attr("name", "fruit")
-            .attr("value", function(d) { return d.key; })
+            .attr("value", function(d) { return d[0]; })
             .on("change", change)
             .filter(function(d, i) { return !i; })
             .each(change)
             .property("checked", true);
 
         label.append("span")
-            .text(function(d) { return d.key; });
+            .text(function(d) { return d[0]; });
 
         function change(region) {
             var path = svg.selectAll("path");
 
-            var data0 = path.data(),
-                data1 = pie(region.values);
+            console.log(region)
+            console.log(region[1])
+            const data0 = path.data(),
+                data1 = pie(region[1]);
 
+            console.log(data0)
+            console.log(data1)
             // JOIN elements with new data.
             path = path.data(data1, key);
 
