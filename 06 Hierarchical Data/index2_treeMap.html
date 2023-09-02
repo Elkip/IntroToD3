@@ -30,7 +30,7 @@
         </div>       
     </div>
 
-<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
 
 <script>
 
@@ -48,8 +48,7 @@
         .round(true)
         .paddingInner(1);
 
-    d3.json("data/treemap.json", function(error, data) {
-        if (error) throw error;
+    d3.json("data/treemap.json").then(function(data) {
 
         // Since we are dealing with hierarchical data, need to convert the data to the right format
         var root = d3.hierarchy(data)
@@ -97,7 +96,7 @@
             .data([sumBySize, sumByCount], function(d) { return d ? d.name : this.value; })
             .on("change", changed);
 
-        function changed(sum) {
+        function changed(e, sum) {
             // Give the treemap a new root, which uses a different summing function
             treemap(root.sum(sum));
 
