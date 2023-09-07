@@ -34,15 +34,17 @@
 
 <script>
 
-    var svg = d3.select("svg"),
+    const svg = d3.select("svg"),
         width = +svg.attr("width"),
         height = +svg.attr("height");
 
-    var fader = function(color) { return d3.interpolateRgb(color, "#fff")(0.2); },
-        color = d3.scaleOrdinal(d3.schemeCategory20.map(fader)),
+    const fader = function (color) {
+            return d3.interpolateRgb(color, "#fff")(0.2);
+        },
+        color = d3.scaleOrdinal(d3.schemeCategory10.map(fader)),
         format = d3.format(",d");
 
-    var treemap = d3.treemap()
+    const treemap = d3.treemap()
         .tile(d3.treemapResquarify)
         .size([width, height])
         .round(true)
@@ -51,18 +53,24 @@
     d3.json("data/treemap.json").then(function(data) {
 
         // Since we are dealing with hierarchical data, need to convert the data to the right format
-        var root = d3.hierarchy(data)
-            .eachBefore(function(d) { d.data.id = (d.parent ? d.parent.data.id + "." : "") + d.data.name; })
+        const root = d3.hierarchy(data)
+            .eachBefore(function (d) {
+                d.data.id = (d.parent ? d.parent.data.id + "." : "") + d.data.name;
+            })
             .sum(sumBySize)
-            .sort(function(a, b) { return b.height - a.height || b.value - a.value; });
+            .sort(function (a, b) {
+                return b.height - a.height || b.value - a.value;
+            });
 
         // Computes x0, x1, y0, and y1 for each node (where the rectangles should be)
         treemap(root);
 
-        var cell = svg.selectAll("g")
+        const cell = svg.selectAll("g")
             .data(root.leaves())
             .enter().append("g")
-                .attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; });
+            .attr("transform", function (d) {
+                return "translate(" + d.x0 + "," + d.y0 + ")";
+            });
 
         // Add rectanges for each of the boxes that were generated
         cell.append("rect")

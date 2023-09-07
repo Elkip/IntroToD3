@@ -23,31 +23,38 @@
 
 <script>
 
-    var width = 960,
+    const width = 960,
         height = 700,
         radius = (Math.min(width, height) / 2) - 10;
 
-    var formatNumber = d3.format(",d");
+    const formatNumber = d3.format(",d");
 
-    var x = d3.scaleLinear()
+    const x = d3.scaleLinear()
         .range([0, 2 * Math.PI]);
 
-    var y = d3.scaleSqrt()
+    const y = d3.scaleSqrt()
         .range([0, radius]);
 
-    var color = d3.scaleOrdinal(d3.schemeCategory10);
+    const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-    var partition = d3.partition();
+    const partition = d3.partition();
 
     // These values will be provided by d3.partition() 
-    var arc = d3.arc()
-        .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x0))); })
-        .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x1))); })
-        .innerRadius(function(d) { return Math.max(0, y(d.y0)); })
-        .outerRadius(function(d) { return Math.max(0, y(d.y1)); });
+    const arc = d3.arc()
+        .startAngle(function (d) {
+            return Math.max(0, Math.min(2 * Math.PI, x(d.x0)));
+        })
+        .endAngle(function (d) {
+            return Math.max(0, Math.min(2 * Math.PI, x(d.x1)));
+        })
+        .innerRadius(function (d) {
+            return Math.max(0, y(d.y0));
+        })
+        .outerRadius(function (d) {
+            return Math.max(0, y(d.y1));
+        });
 
-
-    var svg = d3.select("body").append("svg")
+    const svg = d3.select("body").append("svg")
         .attr("width", width)
         .attr("height", height)
         .append("g")
@@ -68,12 +75,12 @@
             .text(function(d) { return d.data.name + "\n" + formatNumber(d.value); });
     });
 
-    function click(d) {
+    function click(event, d) {
         // Redraw the arcs when one of them is clicked to zoom in on a section
         svg.transition()
             .duration(750)
             .tween("scales", function() {
-                var xd = d3.interpolate(x.domain(), [d.x0, d.x1]),
+                const xd = d3.interpolate(x.domain(), [d.x0, d.x1]),
                     yd = d3.interpolate(y.domain(), [d.y0, 1]),
                     yr = d3.interpolate(y.range(), [d.y0 ? 20 : 0, radius]);
                 return function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); };

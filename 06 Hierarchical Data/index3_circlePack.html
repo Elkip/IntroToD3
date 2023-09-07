@@ -24,45 +24,57 @@
 
 <script>
 
-    var svg = d3.select("svg"),
+    const svg = d3.select("svg"),
         width = +svg.attr("width"),
         height = +svg.attr("height");
 
-    var format = d3.format(",d");
+    const format = d3.format(",d");
 
     // Different way for us to get a color scale
-    var color = d3.scaleSequential(d3.interpolateMagma)
+    const color = d3.scaleSequential(d3.interpolateMagma)
         .domain([-4, 4]);
 
     // Stratify converts the data into the correct format
-    var stratify = d3.stratify()
-        .parentId(function(d) { return d.id.substring(0, d.id.lastIndexOf(".")); });
+    const stratify = d3.stratify()
+        .parentId(function (d) {
+            return d.id.substring(0, d.id.lastIndexOf("."));
+        });
 
     // Similar to how d3.treemap looks
-    var pack = d3.pack()
+    const pack = d3.pack()
         .size([width - 2, height - 2])
         .padding(3);
 
     d3.csv("data/pack.csv").then(function(data) {
 
         // Create the root node with d3.stratify()
-        var root = stratify(data)
-            .sum(function(d) { return d.value; })
-            .sort(function(a, b) { return b.value - a.value; });
+        const root = stratify(data)
+            .sum(function (d) {
+                return d.value;
+            })
+            .sort(function (a, b) {
+                return b.value - a.value;
+            });
 
         // Adds an x, y, and r value to each node
         pack(root);
 
         // Add a group for all the descendents of the root node
-        var node = svg.select("g")
+        const node = svg.select("g")
             .selectAll("g")
             .data(root.descendants())
             .enter().append("g")
-                .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-                .attr("class", function(d) { return "node" + (!d.children ? " node--leaf" : d.depth ? "" : " node--root"); })
-                .each(function(d) { d.node = this; })
-                .on("mouseover", hovered(true))
-                .on("mouseout", hovered(false));
+            .attr("transform", function (d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            })
+            .attr("class", function (d) {
+                return "node" + (!d.children ? " node--leaf" : d.depth ? "" : " node--root");
+            })
+            .each(function (d) {
+                d.node = this;
+            })
+            .on("mouseover", hovered(true))
+            .on("mouseout", hovered(false));
 
         // Append a circle to each node. Color-coded by level of the hierarchy 
         node.append("circle")
@@ -71,7 +83,9 @@
             .style("fill", function(d) { return color(d.depth); });
 
         // Add labels for only the leaf nodes
-        var leaf = node.filter(function(d) { return !d.children; });
+        const leaf = node.filter(function (d) {
+            return !d.children;
+        });
 
         leaf.append("clipPath")
             .attr("id", function(d) { return "clip-" + d.id; })
@@ -92,7 +106,7 @@
             .text(function(d) { return d.id + "\n" + format(d.value); });
     });
 
-    // When we hover over a node, highlight all of the node's ancestors
+    // When we hover over a node, highlight all the node's ancestors
     function hovered(hover) {
         return function(d) {
             d3.selectAll(d.ancestors().map(function(d) { return d.node; })).classed("node--hover", hover);
