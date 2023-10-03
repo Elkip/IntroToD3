@@ -131,7 +131,6 @@
                     ) + "," + (
                         d.y = Math.max(0, Math.min(height - d.dy, event.y))
                     ) + ")");
-                sankeyGen.relayout();
                 link.attr("d", path);
             }
         });
