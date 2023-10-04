@@ -8,9 +8,9 @@ class LineChart {
     initVis() {
         const vis = this;
 
-        vis.MARGIN = { LEFT: 70, RIGHT: 100, TOP: 50, BOTTOM: 100 };
-        vis.WIDTH = 800 - vis.MARGIN.LEFT - vis.MARGIN.RIGHT;
-        vis.HEIGHT = 500 - vis.MARGIN.TOP - vis.MARGIN.BOTTOM;
+        vis.MARGIN = { LEFT: 100, RIGHT: 100, TOP: 30, BOTTOM: 30 }
+        vis.WIDTH = 800 - vis.MARGIN.LEFT - vis.MARGIN.RIGHT
+        vis.HEIGHT = 350 - vis.MARGIN.TOP - vis.MARGIN.BOTTOM
         // create svg area
         vis.svg = d3.select(vis.parentElement).append("svg")
             .attr("width", vis.WIDTH + vis.MARGIN.LEFT + vis.MARGIN.RIGHT)
@@ -65,11 +65,11 @@ class LineChart {
     wrangleData() {
         const vis = this;
 
-        vis.coinFilter = $("#coin-select").val();
+        vis.coin = $("#coin-select").val()
         vis.varFilter = $("#var-select").val();
         vis.sliderFilters = $("#date-slider").slider("values");
         console.log(vis.sliderFilters)
-        vis.fnlCoinData = coinData[vis.coinFilter]
+        vis.fnlCoinData = coinData[vis.coin]
             .filter(d => {
                 return (d.date >= vis.sliderFilters[0] && d.date <= vis.sliderFilters[1]);
             });
@@ -104,6 +104,7 @@ class LineChart {
             .y(d => vis.y(d[vis.varFilter]));
         // add line to chart
         vis.g.select(".line")
+            .attr("stroke", color(vis.coin))
             .transition(vis.t)
             .attr("d", line(vis.fnlCoinData));
         // y axis label

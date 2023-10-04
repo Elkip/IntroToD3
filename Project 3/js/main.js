@@ -4,11 +4,15 @@
 *    Project 3 - CoinStats
 */
 let lineChart;
+let donutChart1;
+let donutChart2;
+let timeline;
 let coinData;
+let donutData;
 
-// time parser for x-scale
 const parseTime = d3.timeParse("%d/%m/%Y");
 const formatTime = d3.timeFormat("%d/%m/%Y");
+const color = d3.scaleOrdinal(d3.schemePastel1)
 
 $("#date-slider")
 	.slider({
@@ -21,24 +25,26 @@ $("#date-slider")
 			parseTime("31/10/2017").getTime()
 		],
 		slide: (event, ui) => {
-			$("#dateLabel1").text(formatTime(new Date(ui.values[0])));
-			$("#dateLabel2").text(formatTime(new Date(ui.values[1])));
-			lineChart.wrangleData();
+
+			const dates = ui.values.map(val => new Date(val))
+			const xVals = dates.map(date => timeline.x(date))
+			timeline.brushComponent.call(timeline.brush.move, xVals)
 		}
 	});
 
 $("#coin-select")
 	.on("click", () => {
-		lineChart.wrangleData();
+		updateCharts();
 	});
 
 $("#var-select")
 	.on("click", () => {
-		lineChart.wrangleData();
+		updateCharts();
 	});
 
 d3.json("data/coins.json").then(data => {
 	coinData = {};
+	donutData = [];
 	Object.keys(data).forEach(coin => {
 		coinData[coin] = data[coin]
 			.filter(d => {
@@ -50,8 +56,39 @@ d3.json("data/coins.json").then(data => {
 				d.date = parseTime(d.date);
 				return d;
 			});
+		donutData.push({
+			"coin": coin,
+			"data": coinData[coin].slice(-1)[0]
+		});
 	});
-	lineChart = new LineChart("#chart-area");
+
+	lineChart = new LineChart("#line-area");
+	donutChart1 = new DonutChart("#donut-area1", "24h_vol");
+	donutChart2 = new DonutChart("#donut-area2", "market_cap");
+	timeline = new Timeline("#timeline-area")
 });
 
+function brushed(event) {
+	const selection = event.selection || timeline.x.range()
+	const newValues = selection.map(timeline.x.invert)
 
+	$("#date-slider")
+		.slider('values', 0, newValues[0])
+		.slider('values', 1, newValues[1])
+	$("#dateLabel1").text(formatTime(newValues[0]))
+	$("#dateLabel2").text(formatTime(newValues[1]))
+
+	lineChart.wrangleData()
+}
+
+function arcClicked(arc) {
+	$("#coin-select").val(arc.data.coin);
+	updateCharts();
+}
+
+function updateCharts() {
+	lineChart.wrangleData();
+	donutChart1.wrangleData();
+	donutChart2.wrangleData();
+	timeline.wrangleData();
+}
